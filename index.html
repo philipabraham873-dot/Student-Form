@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>View Students</title>
+</head>
+<body>
+
+<h2>Registered Students</h2>
+
+<table border="1" cellpadding="10">
+  <thead>
+    <tr>
+      <th>Full Name</th>
+      <th>Matric Number</th>
+    </tr>
+  </thead>
+  <tbody id="studentTable"></tbody>
+</table>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAmAOffQdqmhAXS8R1-JIvz5TDAvX_Xb-Q",
+  authDomain: "form-for-csc315.firebaseapp.com",
+  projectId: "form-for-csc315",
+  storageBucket: "form-for-csc315.firebasestorage.app",
+  messagingSenderId: "980417946572",
+  appId: "1:980417946572:web:1c1ac110e78fb18950b369",
+  measurementId: "G-FDVHQWGY52"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 🔥 Extract Data
+const querySnapshot = await getDocs(collection(db, "students"));
+
+const table = document.getElementById("studentTable");
+
+querySnapshot.forEach((doc) => {
+  const data = doc.data();
+
+  table.innerHTML += `
+    <tr>
+      <td>${data.fullname}</td>
+      <td>${data.matric}</td>
+    </tr>
+  `;
+});
+
+</script>
+
+</body>
+</html>
