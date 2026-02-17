@@ -1,26 +1,99 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>View Students</title>
+  <title>CSC315 Student Registration</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+    }
+
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      width: 350px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #2a5298;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #2a5298;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1e3c72;
+    }
+
+    .link {
+      margin-top: 20px;
+      display: block;
+      text-decoration: none;
+      color: #2a5298;
+      font-weight: bold;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 15px;
+      color: white;
+      font-size: 14px;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Registered Students</h2>
+  <div class="container">
+    <h2>CSC315 Student Registration</h2>
 
-<table border="1" cellpadding="10">
-  <thead>
-    <tr>
-      <th>Full Name</th>
-      <th>Matric Number</th>
-    </tr>
-  </thead>
-  <tbody id="studentTable"></tbody>
-</table>
+    <form id="studentForm">
+      <input type="text" id="fullname" placeholder="Full Name" required>
+      <input type="text" id="matric" placeholder="Matric Number" required>
+      <button type="submit">Submit</button>
+    </form>
+
+    <a href="view.html" class="link">View Registered Students</a>
+  </div>
+
+  <footer>
+    Form designed by Course Rep
+  </footer>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAmAOffQdqmhAXS8R1-JIvz5TDAvX_Xb-Q",
@@ -35,20 +108,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔥 Extract Data
-const querySnapshot = await getDocs(collection(db, "students"));
+document.getElementById("studentForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-const table = document.getElementById("studentTable");
+  const fullname = document.getElementById("fullname").value;
+  const matric = document.getElementById("matric").value;
 
-querySnapshot.forEach((doc) => {
-  const data = doc.data();
+  try {
+    await addDoc(collection(db, "students"), {
+      fullname: fullname,
+      matric: matric,
+      createdAt: new Date()
+    });
 
-  table.innerHTML += `
-    <tr>
-      <td>${data.fullname}</td>
-      <td>${data.matric}</td>
-    </tr>
-  `;
+    alert("Student saved successfully!");
+    document.getElementById("studentForm").reset();
+
+  } catch (error) {
+    alert("Error saving data: " + error.message);
+  }
 });
 
 </script>
